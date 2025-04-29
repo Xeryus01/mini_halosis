@@ -43,12 +43,13 @@
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a class="nav-link text-dark" href="../pages/notifications.html">
+            <!-- <li class="nav-item">
+                <a class="nav-link text-dark" href="{{ asset('pages/notifications.html') }}">
                     <i class="material-symbols-rounded opacity-5">notifications</i>
                     <span class="nav-link-text ms-1">Notifications</span>
                 </a>
-            </li>
+            </li> -->
+
             <!-- end tidak bisa dilihat user biasa -->
             @endauth
 

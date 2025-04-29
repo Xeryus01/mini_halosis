@@ -18,22 +18,22 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="../assets/img/favicon.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/img/apple-icon.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
     <title>
         Material Dashboard 3 by Creative Tim
     </title>
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
     <!-- Nucleo Icons -->
-    <link href="../assets/css/nucleo-icons.css" rel="stylesheet" />
-    <link href="../assets/css/nucleo-svg.css" rel="stylesheet" />
+    <link href="{{ asset('assets/css/nucleo-icons.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/css/nucleo-svg.css') }}" rel="stylesheet" />
     <!-- Font Awesome Icons -->
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!-- Material Icons -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
     <!-- CSS Files -->
-    <link id="pagestyle" href="../assets/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
+    <link id="pagestyle" href="{{ asset('assets/css/material-dashboard.css?v=3.2.0') }}" rel="stylesheet" />
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
@@ -109,7 +109,10 @@
                                                     <a type="button" class="btn btn-sm btn-info"  data-bs-toggle="modal" data-bs-target="#permintaanModal" data-bs-tiket="{{ $lay->tiket_number }}" data-bs-nama="{{ $lay->nama }}" data-bs-layanan="{{ $lay->kat_layanan }}" data-bs-desc="{{ $lay->desc_layanan }}">
                                                     Tindak Lanjut
                                                     </a>
-
+                                                @elseif($lay->state == 2)
+                                                    <a type="button" class="btn btn-sm btn-info"  data-bs-toggle="modal" data-bs-target="#detailModal" data-bs-tiket="{{ $lay->tiket_number }}" data-bs-nama="{{ $lay->nama }}" data-bs-desc="{{ $lay->desc_layanan }}" data-bs-tl="{{ $lay->tindak_lanjut }}">
+                                                    Detail
+                                                    </a>
                                                 @endif
                                             </td>
                                         </tr>
@@ -213,6 +216,10 @@
                                                     <a type="button" class="btn btn-sm btn-info"  data-bs-toggle="modal" data-bs-target="#gangguanModal" data-bs-tiket="{{ $gang->tiket_number }}" data-bs-nama="{{ $gang->nama }}" data-bs-desc="{{ $gang->desc_gangguan }}">
                                                     Tindak Lanjut
                                                     </a>
+                                                @elseif($gang->state == 2)
+                                                    <a type="button" class="btn btn-sm btn-info"  data-bs-toggle="modal" data-bs-target="#detailModal" data-bs-tiket="{{ $gang->tiket_number }}" data-bs-nama="{{ $gang->nama }}" data-bs-desc="{{ $gang->desc_gangguan }}" data-bs-tl="{{ $gang->tindak_lanjut }}">
+                                                    Detail
+                                                    </a>
                                                 @endif
                                             </td>
                                         </tr>
@@ -310,7 +317,7 @@
 
     <!-- Gangguan Modal -->
     <div class="modal fade" id="gangguanModal" tabindex="-1" role="dialog" aria-labelledby="gangguanModalLabel" aria-hidden="true">
-        <form action="" method="post">
+        <form action=" {{ route('gangguan.tl') }} " method="post">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                 <div class="modal-header">
@@ -342,6 +349,49 @@
                     <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn bg-gradient-primary">Save changes</button>
                 </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    
+    <!-- Detail Modal -->
+    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+        <form action="" method="post">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title font-weight-normal" id="detailModalLabel">Modal Gangguan</h5>
+                        <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="input-group input-group-static mb-3">
+                            <label>Pemohon</label>
+                            <input id="detail_nama" type="text" class="form-control" value="Fadil" readonly>
+                        </div>
+                        <div class="input-group input-group-static mb-3">
+                            <label>Deskripsi Masalah</label>
+                            <div id="detail_desc" class="form-control">
+                            </div>
+                        </div>
+                        <div class="input-group input-group-static">
+                            <label>Tindak Lanjut</label>
+                            <div id="detail_tl" class="form-control">
+                            </div>
+                        </div>
+
+                        <!-- <div class="py-4">
+                            <p class="font-weight-bold mt-2 mb-1">Tindak Lanjut</p>
+                            <div class="input-group input-group-outline mb-4">
+                            <textarea id="detail_tl" class="form-control" name="tindak_lanjut" rows="5" value=""></textarea>
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </form>
@@ -455,11 +505,26 @@
             $('#gangguan_desc').text(desc_gangguan);
             $('#gangguanModalLabel').text("Tiket: " + tiket);
         })
+
+        $('#detailModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var modal = $(this)
+
+            const tiket = button[0].getAttribute('data-bs-tiket');
+            const nama = button[0].getAttribute('data-bs-nama');
+            const desc_detail = button[0].getAttribute('data-bs-desc');
+            const tl = button[0].getAttribute('data-bs-tl');
+
+            $('#detail_nama').val(nama);
+            $('#detail_desc').text(desc_detail);
+            $('#detail_tl').text(tl);
+            $('#detailModalLabel').text("Tiket: " + tiket);
+        })
     </script>
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
+    <script src="{{ asset('assets/js/material-dashboard.min.js?v=3.2.0') }}"></script>
 </body>
 
 </html>

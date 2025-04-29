@@ -23,8 +23,8 @@ class App extends Controller
 
     public function tabel()
     {
-        $layanan = DB::select('SELECT a.id, a.tiket_number, a.kat_layanan, a.subkat_layanan, nama, no_telp, tim_kerja, desc_layanan, a.state, b.kat_layanan, c.nama_layanan, d.timestamp FROM permintaan_layanan a JOIN kategori_layanan b ON a.kat_layanan = b.id JOIN subkategori_layanan c ON a.subkat_layanan = c.id JOIN state_layanan d ON a.id = d.id_layanan AND a.state = d.state ORDER BY d.timestamp DESC LIMIT 10;');
-        $gangguan = DB::select('SELECT * FROM permintaan_gangguan a JOIN state_gangguan b ON a.id = b.id_gangguan AND a.state = b.state ORDER BY b.timestamp DESC LIMIT 10');
+        $layanan = DB::select('SELECT a.id, a.tiket_number, a.kat_layanan, a.subkat_layanan, nama, no_telp, tim_kerja, desc_layanan, a.state, b.kat_layanan, c.nama_layanan, d.timestamp, e.tindak_lanjut FROM permintaan_layanan a JOIN kategori_layanan b ON a.kat_layanan = b.id JOIN subkategori_layanan c ON a.subkat_layanan = c.id JOIN state_layanan d ON a.id = d.id_layanan AND a.state = d.state LEFT JOIN tindak_lanjut_layanan e ON a.id = e.id_layanan ORDER BY d.timestamp DESC LIMIT 10');
+        $gangguan = DB::select('SELECT a.*, c.tindak_lanjut FROM permintaan_gangguan a JOIN state_gangguan b ON a.id = b.id_gangguan AND a.state = b.state LEFT JOIN tindak_lanjut_gangguan c ON a.id = c.id_gangguan ORDER BY b.timestamp DESC LIMIT 10');
         return view('tabel', ['navbar' => 'Tabel Layanan', 'layanan' => $layanan, 'gangguan' => $gangguan]);
     }
 
