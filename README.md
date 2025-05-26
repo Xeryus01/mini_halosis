@@ -1,4 +1,7 @@
 <a href="https://webapps.bps.go.id/babel/mini-halosis/index.php">Website mini Halo-SIS (wajib VPN)</a>
+<img src="https://github.com/Xeryus01/mini_halosis/blob/main/1.png?raw=true">
+<img src="https://github.com/Xeryus01/mini_halosis/blob/main/2.png?raw=true">
+<img src="https://github.com/Xeryus01/mini_halosis/blob/main/3.png?raw=true">
 
 <p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
 
