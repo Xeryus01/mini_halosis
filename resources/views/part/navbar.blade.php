@@ -33,12 +33,12 @@
                     <a href="javascript:;" class="nav-link text-body p-0" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="material-symbols-rounded">notifications</i>
                     </a>
-                    <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
+                    <!-- <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
                         <li class="mb-2">
                             <a class="dropdown-item border-radius-md" href="javascript:;">
                                 <div class="d-flex py-1">
                                     <div class="my-auto">
-                                        <img src="../assets/img/team-2.jpg" class="avatar avatar-sm  me-3 ">
+                                        <img src="{{ asset('/assets/img/team-2.jpg') }}" class="avatar avatar-sm  me-3 ">
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
                                         <h6 class="text-sm font-weight-normal mb-1">
@@ -56,7 +56,7 @@
                             <a class="dropdown-item border-radius-md" href="javascript:;">
                                 <div class="d-flex py-1">
                                     <div class="my-auto">
-                                        <img src="../assets/img/small-logos/logo-spotify.svg" class="avatar avatar-sm bg-gradient-dark  me-3 ">
+                                        <img src="{{ asset('/assets/img/small-logos/logo-spotify.svg') }}" class="avatar avatar-sm bg-gradient-dark  me-3 ">
                                     </div>
                                     <div class="d-flex flex-column justify-content-center">
                                         <h6 class="text-sm font-weight-normal mb-1">
@@ -100,10 +100,71 @@
                                 </div>
                             </a>
                         </li>
+                    </ul> -->
+                    <ul class="dropdown-menu dropdown-menu-end px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton" style="min-width:320px;max-width:360px;">
+                        <li class="mb-2 px-1 text-uppercase text-xs text-secondary fw-bold">
+                            Permintaan Terbaru
+                        </li>
+                        @forelse($notif_layanan as $lay)
+                            <li class="mb-2">
+                                <a class="dropdown-item border-radius-md" href="javascript:;" data-bs-toggle="modal" data-bs-target="#detailModal"
+                                    data-bs-tiket="{{ $lay->tiket_number }}"
+                                    data-bs-nama="{{ $lay->nama }}"
+                                    data-bs-desc="{{ $lay->desc_layanan }}"
+                                    data-bs-tl="">
+                                    <div class="d-flex py-1">
+                                        <div class="avatar avatar-sm bg-gradient-primary text-white fw-bold d-flex align-items-center justify-content-center me-3">
+                                            <span class="material-symbols-rounded">assignment</span>
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="text-sm font-weight-normal mb-1">
+                                                <span class="font-weight-bold">{{ $lay->kat_layanan }}</span> oleh {{ $lay->nama }}
+                                            </h6>
+                                            <p class="text-xs text-secondary mb-0">
+                                                <i class="fa fa-clock me-1"></i>
+                                                {{ \Carbon\Carbon::parse($lay->timestamp)->diffForHumans() }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        @empty
+                            <li class="mb-2 px-3 text-xs text-muted">Tidak ada permintaan baru.</li>
+                        @endforelse
+
+                        <li class="mb-2 mt-2 px-1 text-uppercase text-xs text-secondary fw-bold">
+                            Laporan Gangguan Terbaru
+                        </li>
+                        @forelse($notif_gangguan as $gang)
+                            <li class="mb-2">
+                                <a class="dropdown-item border-radius-md" href="javascript:;" data-bs-toggle="modal" data-bs-target="#detailModal"
+                                    data-bs-tiket="{{ $gang->tiket_number }}"
+                                    data-bs-nama="{{ $gang->nama }}"
+                                    data-bs-desc="{{ $gang->desc_gangguan }}"
+                                    data-bs-tl="{{ $gang->tindak_lanjut }}">
+                                    <div class="d-flex py-1">
+                                        <div class="avatar avatar-sm bg-gradient-danger text-white fw-bold d-flex align-items-center justify-content-center me-3">
+                                            <span class="material-symbols-rounded">report_problem</span>
+                                        </div>
+                                        <div class="d-flex flex-column justify-content-center">
+                                            <h6 class="text-sm font-weight-normal mb-1">
+                                                <span class="font-weight-bold">{{ $gang->nama }}</span> melapor gangguan
+                                            </h6>
+                                            <p class="text-xs text-secondary mb-0">
+                                                <i class="fa fa-clock me-1"></i>
+                                                {{ \Carbon\Carbon::parse($gang->timestamp)->diffForHumans() }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        @empty
+                            <li class="mb-2 px-3 text-xs text-muted">Tidak ada laporan baru.</li>
+                        @endforelse
                     </ul>
                 </li>
                 <li class="nav-item d-flex align-items-center">
-                    <a href="/profile" class="nav-link text-body font-weight-bold px-0">
+                    <a href="{{ route('profile') }}" class="nav-link text-body font-weight-bold px-0">
                         <i class="material-symbols-rounded">account_circle</i>
                     </a>
                 </li>

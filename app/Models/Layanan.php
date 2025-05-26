@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Layanan extends Model
 {
-    protected $table = 'permintaan_layanan';
+    protected $table = 'minidb_permintaan_layanan';
     protected $primaryKey = 'id';
     public $incrementing = true;
 

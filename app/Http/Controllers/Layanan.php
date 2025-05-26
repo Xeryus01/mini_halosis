@@ -60,14 +60,14 @@ class Layanan extends Controller
             ];
             $post = array_merge($post_req, $add_on);
             unset($post['_token']);
-            $id_layanan = DB::table('permintaan_layanan')->insertGetId($post);
+            $id_layanan = DB::table('minidb_permintaan_layanan')->insertGetId($post);
 
             $state = [
                 'id_layanan' => $id_layanan,
                 'state' => '0',
                 'operator' => $user_id
             ];
-            DB::table('state_layanan')->insertGetId($state);
+            DB::table('minidb_state_layanan')->insertGetId($state);
 
             $message = "Permintaan Layanan Anda [" . $add_on['tiket_number'] ."]  terkait \"" . $post_req['desc_layanan'] . "\" telah kami terima.\n";
             $message .= "Kami akan segera memproses permintaan Anda dan menghubungi Anda melalui nomor telepon yang telah Anda berikan.\n";
@@ -105,14 +105,14 @@ class Layanan extends Controller
             $post = array_merge($post_req, $add_on);
 
             unset($post['_token']);
-            $id_gangguan = DB::table('permintaan_gangguan')->insertGetId($post);
+            $id_gangguan = DB::table('minidb_permintaan_gangguan')->insertGetId($post);
 
             $state = [
                 'id_gangguan' => $id_gangguan,
                 'state' => '0',
                 'operator' => $user_id
             ];
-            DB::table('state_gangguan')->insertGetId($state);
+            DB::table('minidb_state_gangguan')->insertGetId($state);
 
             $message = "Laporan Gangguan Anda [" . $add_on['tiket_number'] ."] terkait \"" . $post_req['desc_gangguan'] . "\" telah kami terima.\n";
             $message .= "Kami akan segera memproses laporan Anda dan menghubungi Anda melalui nomor telepon yang telah Anda berikan.\n";
@@ -127,28 +127,16 @@ class Layanan extends Controller
         }
     }
 
-    public function user()
-    {
-        return auth()->user();
-    }
-
-    public function profile()
-    {
-        $username = auth()->user()['name'];
-
-        return view('profile', ['navbar' => 'Profil', 'username' => auth()->user()['name']]);
-    }
-
     public function proses_layanan($tiket, $state)
     {
 
-        $layanan = DB::table('permintaan_layanan')
+        $layanan = DB::table('minidb_permintaan_layanan')
             ->where('tiket_number', $tiket)
             ->first();
 
         if ($layanan) {
             if ($state == "2") {
-                $is_tl = DB::table('tindak_lanjut_layanan')
+                $is_tl = DB::table('minidb_tindak_lanjut_layanan')
                 ->where('id_layanan', $layanan->id)
                 ->first();
                 if (!$is_tl) {
@@ -157,7 +145,7 @@ class Layanan extends Controller
             }
 
             // Update kolom state
-            DB::table('permintaan_layanan')
+            DB::table('minidb_permintaan_layanan')
                 ->where('tiket_number', $tiket)
                 ->update(['state' => $state]);
     
@@ -167,7 +155,7 @@ class Layanan extends Controller
                 'state' => $state,
                 'operator' => auth()->user()->id
             ];
-            DB::table('state_layanan')->insert($insert);
+            DB::table('minidb_state_layanan')->insert($insert);
     
             return redirect()->back()->with('success', 'State berhasil diperbarui.');
         } else {
@@ -177,14 +165,13 @@ class Layanan extends Controller
 
     public function proses_gangguan($tiket, $state)
     {
-
-        $gangguan = DB::table('permintaan_gangguan')
+        $gangguan = DB::table('minidb_permintaan_gangguan')
             ->where('tiket_number', $tiket)
             ->first();
 
         if ($gangguan) {
             if ($state == "2") {
-                $is_tl = DB::table('tindak_lanjut_gangguan')
+                $is_tl = DB::table('minidb_tindak_lanjut_gangguan')
                 ->where('id_gangguan', $gangguan->id)
                 ->first();
                 if (!$is_tl) {
@@ -193,7 +180,7 @@ class Layanan extends Controller
             }
 
             // Update kolom state
-            DB::table('permintaan_gangguan')
+            DB::table('minidb_permintaan_gangguan')
                 ->where('tiket_number', $tiket)
                 ->update(['state' => $state]);
     
@@ -203,7 +190,7 @@ class Layanan extends Controller
                 'state' => $state,
                 'operator' => auth()->user()->id
             ];
-            DB::table('state_gangguan')->insert($insert);
+            DB::table('minidb_state_gangguan')->insert($insert);
     
             return redirect()->back()->with('success', 'State berhasil diperbarui.');
         } else {
@@ -222,7 +209,7 @@ class Layanan extends Controller
             $post_req = $request->post();
             $user_id = auth()->user()->id;
 
-            $layanan = DB::table('permintaan_layanan')
+            $layanan = DB::table('minidb_permintaan_layanan')
             ->where('tiket_number', $post_req['token'])
             ->first();
 
@@ -234,10 +221,10 @@ class Layanan extends Controller
                 ];
 
                 // Insert data ke tabel tindak_lanjut_layanan
-                DB::table('tindak_lanjut_layanan')->insert($post);
+                DB::table('minidb_tindak_lanjut_layanan')->insert($post);
 
                 // Update kolom state
-                DB::table('permintaan_layanan')
+                DB::table('minidb_permintaan_layanan')
                 ->where('tiket_number', $post_req['token'])
                 ->update(['state' => '2']);
                 
@@ -247,11 +234,11 @@ class Layanan extends Controller
                     'state' => '2',
                     'operator' => auth()->user()->id
                 ];
-                DB::table('state_layanan')->insert($insert);
+                DB::table('minidb_state_layanan')->insert($insert);
 
                 // Kirim pesan WhatsApp
                 $message = "Tindak lanjut untuk permintaan layanan Anda [" . $post_req['token'] . "] telah berhasil ditambahkan oleh " . auth()->user()->name . ".\n";
-                $message .= "Tindak lanjut: " . $post_req['tindak_lanjut'] . "\n";
+                $message .= "Tindak lanjut: *" . $post_req['tindak_lanjut'] . "*\n";
                 $message .= "Terima kasih telah menggunakan layanan kami.";
                 $this->send_wa($layanan->no_telp, $message);
 
@@ -269,29 +256,76 @@ class Layanan extends Controller
     
     public function tindak_lanjut_gangguan(Request $request)
     {
-        dd($request->all());
         $this->validate($request, [
-            'tindak_lanjut' => 'required',
-            'tindak_lanjut_desc' => 'required'
+            'token' => 'required',
+            'tindak_lanjut' => 'required'
         ]);
 
         try {
             $post_req = $request->post();
             $user_id = auth()->user()->id;
 
-            $add_on = [
-                'id_gangguan' => $post_req['id_gangguan'],
-                'operator' => $user_id,
-                'state' => '2',
-            ];
-            $post = array_merge($post_req, $add_on);
-            unset($post['_token']);
-            DB::table('tindak_lanjut_gangguan')->insertGetId($post);
+            $gangguan = DB::table('minidb_permintaan_gangguan')
+            ->where('tiket_number', $post_req['token'])
+            ->first();
 
-            return redirect()->back()->with('success', 'Tindak lanjut berhasil ditambahkan.');
+            if ($gangguan) {
+                $post = [
+                    'id_gangguan' => $gangguan->id,
+                    'tindak_lanjut' => $post_req['tindak_lanjut'],
+                    'operator' => auth()->user()->id
+                ];
+
+                // Insert data ke tabel tindak_lanjut_gangguan
+                DB::table('minidb_tindak_lanjut_gangguan')->insert($post);
+
+                // Update kolom state
+                DB::table('minidb_permintaan_gangguan')
+                ->where('tiket_number', $post_req['token'])
+                ->update(['state' => '2']);
+                
+                // Update state_gangguan untuk mencatat perubahan state
+                $insert = [
+                    'id_gangguan' => $gangguan->id,
+                    'state' => '2',
+                    'operator' => auth()->user()->id
+                ];
+                DB::table('minidb_state_gangguan')->insert($insert);
+
+                // Kirim pesan WhatsApp
+                $message = "Tindak lanjut untuk permasalahan gangguan Anda [" . $post_req['token'] . "] telah berhasil ditambahkan oleh " . auth()->user()->name . ".\n";
+                $message .= "Tindak lanjut: *" . $post_req['tindak_lanjut'] . "*\n";
+                $message .= "Terima kasih telah menggunakan layanan kami.";
+                $this->send_wa($gangguan->no_telp, $message);
+
+                return redirect()->back()->with('success', 'Tindak lanjut berhasil ditambahkan.');
+
+            } else {
+                // Jika data tidak ditemukan, tampilkan pesan error
+                return redirect()->back()->with('error', 'Data tidak ditemukan.');
+            }
         } catch (\Exception $e) {
             // Tangani error dan tampilkan pesan
             return redirect()->back()->with('error', 'Tindak lanjut gagal ditambahkan. Silakan coba lagi. Error: ' . $e->getMessage());
         }
+    }
+    
+    public function layanan_destroy($tiket_number)
+    {
+        // Hapus data layanan berdasarkan tiket_number
+        DB::table('minidb_permintaan_layanan')->where('tiket_number', $tiket_number)->delete();
+        // Jika ada relasi lain (state, tindak lanjut, dsb), hapus juga jika perlu:
+        DB::table('minidb_state_layanan')->where('id_layanan', $tiket_number)->delete();
+        DB::table('minidb_tindak_lanjut_layanan')->where('id_layanan', $tiket_number)->delete();
+
+        return redirect()->back()->with('success', 'Pengajuan layanan berhasil dihapus.');
+    }
+
+    public function gangguan_destroy($tiket_number)
+    {
+        DB::table('minidb_permintaan_gangguan')->where('tiket_number', $tiket_number)->delete();
+        DB::table('minidb_state_gangguan')->where('id_gangguan', $tiket_number)->delete();
+        DB::table('minidb_tindak_lanjut_gangguan')->where('id_gangguan', $tiket_number)->delete();
+        return redirect()->back()->with('success', 'Laporan gangguan berhasil dihapus.');
     }
 }

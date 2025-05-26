@@ -63,11 +63,11 @@
 
 <!--   Core JS Files   -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-<script src="../assets/js/core/popper.min.js"></script>
-<script src="../assets/js/core/bootstrap.min.js"></script>
-<script src="../assets/js/plugins/perfect-scrollbar.min.js"></script>
-<script src="../assets/js/plugins/smooth-scrollbar.min.js"></script>
-<script src="../assets/js/plugins/chartjs.min.js"></script>
+<script src="{{ asset('/assets/js/core/popper.min.js') }}"></script>
+<script src="{{ asset('/assets/js/core/bootstrap.min.js') }}"></script>
+<script src="{{ asset('/assets/js/plugins/perfect-scrollbar.min.js') }}"></script>
+<script src="{{ asset('/assets/js/plugins/smooth-scrollbar.min.js') }}"></script>
+<script src="{{ asset('/assets/js/plugins/chartjs.min.js') }}"></script>
 <script>
     if (body.classList.contains(''))
         window.addEventListener('click', function(e) {

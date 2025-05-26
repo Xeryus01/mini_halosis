@@ -88,13 +88,39 @@
                                                 <span class="text-secondary text-xs font-weight-bold">{{ $lay->timestamp }}</span>
                                             </td>
                                             <td class="align-middle" data-label="Aksi">
-                                                <a type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal"
-                                                    data-bs-tiket="{{ $lay->tiket_number }}"
-                                                    data-bs-nama="{{ $lay->nama }}"
-                                                    data-bs-desc="{{ $lay->desc_layanan }}"
-                                                    data-bs-tl="{{ $lay->tindak_lanjut }}">
-                                                    Detail
-                                                </a>
+                                                @if($lay->state == 0)
+                                                    <form action="{{ route('layanan.proses', [$lay->tiket_number, '1']) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-primary">Proses</button>
+                                                    </form>
+                                                @elseif($lay->state == 1)
+                                                    <a type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#permintaanModal"
+                                                        data-bs-tiket="{{ $lay->tiket_number }}"
+                                                        data-bs-nama="{{ $lay->nama }}"
+                                                        data-bs-layanan="{{ $lay->kat_layanan }}"
+                                                        data-bs-desc="{{ $lay->desc_layanan }}">
+                                                        Tindak Lanjut
+                                                    </a>
+                                                @elseif($lay->state == 2)
+                                                    <a type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal"
+                                                        data-bs-tiket="{{ $lay->tiket_number }}"
+                                                        data-bs-nama="{{ $lay->nama }}"
+                                                        data-bs-desc="{{ $lay->desc_layanan }}"
+                                                        data-bs-tl="{{ $lay->tindak_lanjut }}">
+                                                        Detail
+                                                    </a>
+                                                @endif
+                                                @auth
+                                                    @if(auth()->user()->role === 'admin')
+                                                        <form action="{{ route('layanan.destroy', $lay->tiket_number) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus pengajuan ini?')">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="btn btn-sm btn-outline-danger" title="Hapus">
+                                                                <span class="material-symbols-rounded align-middle">delete</span>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                @endauth
                                             </td>
                                         </tr>
                                         @empty
@@ -169,13 +195,38 @@
                                                 @endif
                                             </td>
                                             <td class="align-middle" data-label="Aksi">
-                                                <a type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal"
-                                                    data-bs-tiket="{{ $gang->tiket_number }}"
-                                                    data-bs-nama="{{ $gang->nama }}"
-                                                    data-bs-desc="{{ $gang->desc_gangguan }}"
-                                                    data-bs-tl="{{ $gang->tindak_lanjut }}">
-                                                    Detail
-                                                </a>
+                                                @if($gang->state == 0)
+                                                    <form action="{{ route('gangguan.proses', [$gang->tiket_number, '1']) }}" method="POST" style="display:inline;">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-primary">Proses</button>
+                                                    </form>
+                                                @elseif($gang->state == 1)
+                                                    <a type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#gangguanModal"
+                                                        data-bs-tiket="{{ $gang->tiket_number }}"
+                                                        data-bs-nama="{{ $gang->nama }}"
+                                                        data-bs-desc="{{ $gang->desc_gangguan }}">
+                                                        Tindak Lanjut
+                                                    </a>
+                                                @elseif($gang->state == 2)
+                                                    <a type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#detailModal"
+                                                        data-bs-tiket="{{ $gang->tiket_number }}"
+                                                        data-bs-nama="{{ $gang->nama }}"
+                                                        data-bs-desc="{{ $gang->desc_gangguan }}"
+                                                        data-bs-tl="{{ $gang->tindak_lanjut }}">
+                                                        Detail
+                                                    </a>
+                                                @endif
+                                                @auth
+                                                    @if(auth()->user()->role === 'admin')
+                                                        <form action="{{ route('gangguan.destroy', $gang->tiket_number) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus laporan gangguan ini?')">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button class="btn btn-sm btn-outline-danger" title="Hapus">
+                                                                <span class="material-symbols-rounded align-middle">delete</span>
+                                                            </button>
+                                                        </form>
+                                                    @endif
+                                                @endauth
                                             </td>
                                         </tr>
                                         @empty
@@ -197,6 +248,81 @@
     </main>
 
     {{-- Modals --}}
+    <!-- Permintaan Modal -->
+    <div class="modal fade" id="permintaanModal" tabindex="-1" role="dialog" aria-labelledby="permintaanModalLabel" aria-hidden="true">
+        <form action="{{ route('layanan.tl') }}" method="POST">
+            @csrf
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title font-weight-normal" id="permintaanModalLabel">Modal Permintaan</h5>
+                        <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="token" id="permintaan_token">
+                        <div class="input-group input-group-static mb-3">
+                            <label>Pemohon</label>
+                            <input id="permintaan_nama" type="text" class="form-control" readonly>
+                        </div>
+                        <div class="input-group input-group-static mb-3">
+                            <label>Kategori Layanan</label>
+                            <input id="permintaan_layanan" type="text" class="form-control" readonly>
+                        </div>
+                        <div class="input-group input-group-static">
+                            <label>Deskripsi Permintaan</label>
+                            <div id="permintaan_desc" class="form-control"></div>
+                        </div>
+                        <div class="py-4">
+                            <p class="font-weight-bold mt-2 mb-1">Tindak Lanjut</p>
+                            <div class="input-group input-group-outline mb-4">
+                                <textarea class="form-control" name="tindak_lanjut" rows="5"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn bg-gradient-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Gangguan Modal -->
+    <div class="modal fade" id="gangguanModal" tabindex="-1" role="dialog" aria-labelledby="gangguanModalLabel" aria-hidden="true">
+        <form action="{{ route('gangguan.tl') }}" method="post">
+            @csrf
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title font-weight-normal" id="gangguanModalLabel">Modal Gangguan</h5>
+                        <button type="button" class="btn-close text-dark" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="token" id="gangguan_token">
+                        <div class="input-group input-group-static mb-3">
+                            <label>Pelapor</label>
+                            <input id="gangguan_nama" type="text" class="form-control" readonly>
+                        </div>
+                        <div class="input-group input-group-static">
+                            <label>Deskripsi Masalah</label>
+                            <div id="gangguan_desc" class="form-control"></div>
+                        </div>
+                        <div class="py-4">
+                            <p class="font-weight-bold mt-2 mb-1">Tindak Lanjut</p>
+                            <div class="input-group input-group-outline mb-4">
+                                <textarea class="form-control" name="tindak_lanjut" rows="5"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn bg-gradient-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
     <!-- Detail Modal -->
     <div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
@@ -271,7 +397,41 @@
         </div>
     </div>
 
+    <!-- Toast Notification -->
+    <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <div class="toast align-items-center text-white bg-success border-0" id="successToast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ session('success') }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+        <div class="toast align-items-center text-white bg-danger border-0" id="errorToast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ session('error') }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     @include('part.fixed-plugin')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if(session('success'))
+                var successToast = new bootstrap.Toast(document.getElementById('successToast'));
+                successToast.show();
+            @endif
+
+            @if(session('error'))
+                var errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                errorToast.show();
+            @endif
+        });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

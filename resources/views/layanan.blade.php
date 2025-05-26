@@ -21,7 +21,7 @@
     <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('assets/img/apple-icon.png') }}">
     <link rel="icon" type="image/png" href="{{ asset('assets/img/favicon.png') }}">
     <title>
-        Material Dashboard 3 by Creative Tim
+        @yield('title', 'mini Halo-SIS') | {{ config('app.name') }}
     </title>
     <!--     Fonts and icons     -->
     <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
@@ -35,35 +35,40 @@
     <!-- CSS Files -->
     <link id="pagestyle" href="{{ asset('assets/css/material-dashboard.css?v=3.2.0') }}" rel="stylesheet" />
     <link href="{{ asset('assets/scss/form.scss') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
 
-    @include('part\sidebar')
+    @include('part.sidebar')
 
     <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg ">
 
-        @include('part\navbar')
+        @include('part.navbar')
 
         <div class="container-fluid py-2">
             <div class="row">
                 <div class=" mt-4 mb-4">
-                    <form action="/post_layanan" method="post">
+                    <form action="{{ route('post_layanan') }}" method="post">
                         @if ($errors->any())
-                        <div class="alert alert-danger">
-                            <ul>
-                                @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
+                            <div class="alert alert-danger d-flex align-items-start gap-3 py-3 px-4 mb-4 rounded-3 shadow-sm border-0" role="alert" style="background: #fff0f1;">
+                                <span class="material-symbols-rounded flex-shrink-0 text-danger" style="font-size:2.2rem;line-height:1;">error</span>
+                                <div>
+                                    <div class="fw-bold mb-2 text-danger" style="font-size:1.1rem;">Terjadi Kesalahan</div>
+                                    <ul class="mb-0 ps-3 small" style="list-style-type: disc;">
+                                        @foreach ($errors->all() as $error)
+                                            <li class="mb-1">{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            </div>
                         @endif
 
                         @csrf <!-- {{ csrf_field() }} -->
 
                         <div class="card">
-                            <div class="card-body">
+                            <div class="card-body row g-3">
 
                                 <h1>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-align-justify">
@@ -77,12 +82,12 @@
                                 <br>
                                 <p>Masukan informasi yang dibutuhkan untuk pembuatan layanan</p>
 
-                                <div class="nice-form-group">
+                                <div class="nice-form-group col-md-6">
                                     <label>Nama</label>
                                     <input type="text" name="nama" placeholder="Masukkan nama" value="" />
                                 </div>
 
-                                <div class="nice-form-group">
+                                <div class="nice-form-group col-md-6">
                                     <label>No Telepon</label>
                                     <input type="tel" name="no_telp" placeholder="Masukkan no telepon" value="" />
                                 </div>
@@ -110,7 +115,7 @@
                                     </select>
                                 </div>
 
-                                <div class="nice-form-group">
+                                <div class="nice-form-group col-md-6">
                                     <label>Kategori Layanan</label>
                                     <select name="kat_layanan" id="kat_layanan">
                                         <option disabled selected>pilih satu layanan</option>
@@ -125,7 +130,7 @@
                                     </select>
                                 </div>
 
-                                <div class="nice-form-group">
+                                <div class="nice-form-group col-md-6">
                                     <label>Nama Layanan</label>
                                     <select name="subkat_layanan" id="nama_layanan">
                                         <option disabled selected>pilih satu layanan</option>
@@ -139,45 +144,19 @@
 
                                 <br>
 
-                                <button type="submit" class="btn btn-success">Submit</button>
+                                <div class="d-flex justify-content-end mt-4">
+                                    <button type="submit" class="btn btn-primary px-5 py-2">
+                                        <span class="material-symbols-rounded align-middle me-1" style="font-size: 1.2rem;">send</span>
+                                        Submit
+                                    </button>
+                                </div>
 
                             </div>
                         </div>
                     </form>
                 </div>
             </div>
-            <footer class="footer py-4  ">
-                <div class="container-fluid">
-                    <div class="row align-items-center justify-content-lg-between">
-                        <div class="col-lg-6 mb-lg-0 mb-4">
-                            <div class="copyright text-center text-sm text-muted text-lg-start">
-                                © <script>
-                                    document.write(new Date().getFullYear())
-                                </script>,
-                                made with <i class="fa fa-heart"></i> by
-                                <a href="https://www.creative-tim.com" class="font-weight-bold" target="_blank">Creative Tim</a>
-                                for a better web.
-                            </div>
-                        </div>
-                        <div class="col-lg-6">
-                            <ul class="nav nav-footer justify-content-center justify-content-lg-end">
-                                <li class="nav-item">
-                                    <a href="https://www.creative-tim.com" class="nav-link text-muted" target="_blank">Creative Tim</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="https://www.creative-tim.com/presentation" class="nav-link text-muted" target="_blank">About Us</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="https://www.creative-tim.com/blog" class="nav-link text-muted" target="_blank">Blog</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="https://www.creative-tim.com/license" class="nav-link pe-0 text-muted" target="_blank">License</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            @include('part.footer')
         </div>
     </main>
 
@@ -201,7 +180,7 @@
         </div>
     </div>
 
-    @include('part\fixed-plugin')
+    @include('part.fixed-plugin')
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -229,8 +208,8 @@
     <!-- Github buttons -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <!-- Control Center for Material Dashboard: parallax effects, scripts for the example pages etc -->
-    <script src="../assets/js/material-dashboard.min.js?v=3.2.0"></script>
-    <script src="../assets/js/form.js"></script>
+    <script src="{{ asset('/assets/js/material-dashboard.min.js?v=3.2.0') }}"></script>
+    <script src="{{ asset('/assets/js/form.js') }}"></script>
 </body>
 
 </html>
