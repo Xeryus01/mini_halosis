@@ -1,4 +1,4 @@
-<a href="https://webapps.bps.go.id/babel/mini-halosis/index.php">Website mini Halo-SIS (wajib VPN)</a>
+![image](https://github.com/user-attachments/assets/a2f3df5d-d54a-46eb-85be-dd3b31cbe10c)<a href="https://webapps.bps.go.id/babel/mini-halosis/index.php">Website mini Halo-SIS (wajib VPN)</a>
 
 <img src="https://github.com/Xeryus01/mini_halosis/blob/main/1.png?raw=true">
 <img src="https://github.com/Xeryus01/mini_halosis/blob/main/2.png?raw=true">
